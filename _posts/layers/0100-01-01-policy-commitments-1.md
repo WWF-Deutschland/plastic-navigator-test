@@ -3,32 +3,30 @@ layout: layer
 published: true
 permalink: /content/en/layers/policy-commitments-1/
 lang: en
-title: Reduce
+title: Ban & phase out
 ---
 
-Where possible, production and consumption of problematic plastics should be significantly reduced. In line with the risk-based approach, initial emphasis should be on the product categories, additives or materials that generate the largest pressure on the system, most frequently end up in the environment, and obstruct the transition towards a non-toxic circular economy. These include, _inter alia_, packaging, and other single-use plastic items, fishing gear and other maritime equipment, and microplastics. Priority lists of such products, additives or materials should urgently be developed
+Where possible, the treaty must put in place specific, binding measures to significantly reduce or eliminate the production and consumption of plastic categories of concern. In line with a risk-based approach, initial emphasis should be on the products, additives or materials that generate the largest pressure on the system, and pose the highest risks. Priority lists of such products, additives or materials should urgently be developed.
 
-Example (non-exhaustive) measures:
+The Global Plastic Navigator tracks the states’ level of support for the treaty’s inclusion of global bans and phase-out requirements to eliminate the production, consumption, and trade of certain plastic categories of concern, including products, materials, or substances deemed to pose a significant risk, including probability and severity of potential harms to humans (including to human health), other living species, and the relevant environment.
 
-*	Bans and phase-outs of certain product categories, materials or substances deemed to pose a significant risk, including probability of leakage and potential harm to human health and the environment
-*	Market-based instruments such as taxes and fees to reduce production, consumption and trade of certain product categories, materials, or substances
+States’ convergence on the need to eliminate or significantly reduce these plastic categories is taken as one of the indicators for the development of an ambitious and effective treaty to end plastic pollution. WWF’s [submission (pdf)]( https://apps1.unep.org/resolutions/uploads/230106_wwfs_submission_on_potential_options_for_elements_towards_an_international_legally_binding_instrument_0.pdf) to the Intergovernmental Negotiating Committee, provides further information on WWF’s key recommendations on the potential options for elements towards an international legally binding instrument.
 
 
 ## How to read the data
 
-TODO
+The visualisation shows the level of support, publicly expressed by states participating in the negotiation of a new treaty on plastic pollution, for the inclusion of global bans and phase-out requirements to eliminate the production, consumption and trade of certain plastic categories of concern. 
 
-The visualisation shows the level of support publicly expressed by United Nations (UN) Member States related to a new global agreement to address marine plastic pollution.
+* Green indicates states that have publicly expressed—in their latest verbal or written statement on this topic—support for the treaty’s inclusion of global bans and phase-out requirements to eliminate the production, consumption and trade of at least one or more plastic categories of concern.
+* Grey indicates states that have not expressed support for the treaty’s inclusion of global bans and phase-outs of any plastic category of concern in their latest verbal or written public statement on this topic.
 
-* The darkest green indicates ...
-* The less dark green indicates UN Member States that have officially called for a new agreement.
-* The lightest green shows UN Member States that have expressed — including through regional declarations or decisions — a willingness to explore the option of a new global agreement.
-* Grey indicates countries for which no public statement or commitment of support (for a new global agreement) has been documented.
-
-_Clicking on the States shows a brief overview of the state’s level of support and clicking on “Read more” displays detailed information with source._
+_Clicking on the states shows a brief overview of the state’s level of support and clicking on “Read more” displays detailed information with source._
 
 ### About the data
 
-The estimated level of support by each state is based on WWF’s assessment of publicly available documents, including regional declarations and decisions (e.g. Africa, EU, Caribbean, Nordic countries), regional action plans (e.g. Pacific Islands) as well as the Terms of Reference for the Group of Friends in New York.
+The estimated level of support by each state is based on WWF’s assessment of publicly available documents, including national and regional declarations and decisions, interventions during meetings of the Intergovernmental Negotiating Committee (INC), and written submissions to the INC.
+
+A group statement is understood as representing the level of support of all member states of the group, unless indicated otherwise through an individual member state’s statement recorded at the same time.
 
 _The designation of geographical entities and the presentation of the material do not imply the expression of any opinion whatsoever on the part of WWF concerning the legal status of any country, territory, or area, or of its authorities, or concerning the delimitation of its frontiers or boundaries. The map of countries is reproduced from Natural Earth, a public domain map dataset that is built through a collaboration of volunteers and supported by NACIS (North American Cartographic Information Society)._
+
