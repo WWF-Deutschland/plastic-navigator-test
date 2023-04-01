@@ -19,7 +19,7 @@ States’ convergence on the need to ensure a non-toxic circular economy of plas
 
 The visualisation shows the level of support, publicly expressed by states participating in the negotiation of a new treaty on plastic pollution, for the inclusion of global requirements and standards towards a non-toxic circular economy for remaining plastics (those not eliminated). 
 
-* Green indicates states that have publicly expressed—in their latest verbal or written public statement on this topic—support for the treaty’s inclusion of global requirements and standards for products and relevant systems to circulate remaining plastics in a non-toxic circular economy.
+* Green indicates states that have publicly expressed—in their latest verbal or written statement on this topic—support for the treaty’s inclusion of global requirements and standards for products and relevant systems to circulate remaining plastics in a non-toxic circular economy.
 * Grey indicates states that have not expressed support for the treaty’s inclusion of any global requirement and standard towards a non-toxic circular economy in their latest verbal or written public statement on this topic.
 
 _Clicking on the States shows a brief overview of the state’s level of support and clicking on “Read more” displays detailed information with source._
