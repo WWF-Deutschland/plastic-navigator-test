@@ -13,13 +13,25 @@ export default defineMessages({
     id: `${scope}.titleReference`,
     defaultMessage: 'Reference',
   },
-  multiplePositions: {
-    id: `${scope}.multiplePositions`,
-    defaultMessage: 'Multiple Positions',
+  multipleStatements: {
+    id: `${scope}.multipleStatements`,
+    defaultMessage: 'Statement positions by topic',
+  },
+  singleStatement: {
+    id: `${scope}.singleStatement`,
+    defaultMessage: 'Statement position for topic',
+  },
+  noStatement: {
+    id: `${scope}.noStatement`,
+    defaultMessage: 'No statement recorded',
   },
   position: {
     id: `${scope}.position`,
     defaultMessage: 'Position',
+  },
+  statementPosition: {
+    id: `${scope}.statementPosition`,
+    defaultMessage: 'Statement position',
   },
   quote: {
     id: `${scope}.quote`,
@@ -81,6 +93,14 @@ export default defineMessages({
     id: `${scope}.hidePanel`,
     defaultMessage: 'Hide panel',
   },
+  statementPositionsLabel: {
+    id: `${scope}.statementPositionsLabel`,
+    defaultMessage: 'Statement positions for topics',
+  },
+  statementSinglePositionLabel: {
+    id: `${scope}.statementSinglePositionLabel`,
+    defaultMessage: 'Statement positions for topic',
+  },
   scoreCardLabel: {
     id: `${scope}.scoreCardLabel`,
     defaultMessage: 'Policy position by topic',
@@ -88,5 +108,9 @@ export default defineMessages({
   scoreCardSelect: {
     id: `${scope}.scoreCardSelect`,
     defaultMessage: 'Select a topic to view statements and show on map',
+  },
+  latestPositionLabel: {
+    id: `${scope}.latestPositionLabel`,
+    defaultMessage: 'Current position',
   },
 });
