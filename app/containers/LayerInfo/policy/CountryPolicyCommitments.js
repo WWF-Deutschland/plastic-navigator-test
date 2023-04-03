@@ -27,10 +27,15 @@ const StatementListHeaderText = styled(p => <Text size="xsmall" {...p} />)`
   font-weight: bold;
 `;
 
-const CountryPolicyCommitments = ({ country, indicatorId, layerData }) => {
+const CountryPolicyCommitments = ({
+  country,
+  indicatorId,
+  layerInfo,
+  onSelectStatement,
+}) => {
   const statements = getCountryStatements({
     countryCode: country.code,
-    tables: layerData.data.tables,
+    tables: layerInfo.data.tables,
     topicId: indicatorId,
   });
   return (
@@ -59,9 +64,10 @@ const CountryPolicyCommitments = ({ country, indicatorId, layerData }) => {
             key={statement.id}
             statement={statement}
             multiple={statements.length > 1}
-            config={layerData.config}
-            tables={layerData.data.tables}
+            config={layerInfo.config}
+            tables={layerInfo.data.tables}
             indicatorId={indicatorId}
+            onSelectStatement={onSelectStatement}
           />
         ))}
     </Styled>
@@ -70,8 +76,9 @@ const CountryPolicyCommitments = ({ country, indicatorId, layerData }) => {
 
 CountryPolicyCommitments.propTypes = {
   country: PropTypes.object,
-  layerData: PropTypes.object,
+  layerInfo: PropTypes.object,
   indicatorId: PropTypes.string,
+  onSelectStatement: PropTypes.func,
 };
 
 export default CountryPolicyCommitments;

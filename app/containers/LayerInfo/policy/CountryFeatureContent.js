@@ -112,10 +112,11 @@ const IndicatorDescription = styled(p => <MarkdownText {...p} />)``;
 
 export function CountryFeatureContent({
   featureId,
-  layerData,
+  layerInfo,
   indicatorId,
   onSetIndicator,
   intl,
+  onSelectStatement,
 }) {
   // const [showLink, setShowLink] = useState(false);
   // const inputRef = useRef();
@@ -125,13 +126,13 @@ export function CountryFeatureContent({
   //   }
   // }, [showLink, inputRef]);
   const { locale } = intl;
-  if (!featureId || !layerData) return null;
-  const country = layerData.data.features.find(f => f.code === featureId);
+  if (!featureId || !layerInfo) return null;
+  const country = layerInfo.data.features.find(f => f.code === featureId);
   if (!country) return null;
   const title = country[`name_${locale}`] || country[`name_${DEFAULT_LOCALE}`];
   const indicatorPositions = getIndicatorScoresForCountry({
     country,
-    layerData,
+    layerInfo,
     indicatorId,
   });
   const currentIndicator =
@@ -166,11 +167,11 @@ export function CountryFeatureContent({
                   >
                     <IconWrap
                       color={
-                        layerData.config['styles-by-value'] &&
-                        layerData.config['styles-by-value'][
+                        layerInfo.config['styles-by-value'] &&
+                        layerInfo.config['styles-by-value'][
                           indicator.position.value
                         ] &&
-                        layerData.config['styles-by-value'][
+                        layerInfo.config['styles-by-value'][
                           indicator.position.value
                         ].fillColor
                       }
@@ -214,7 +215,7 @@ export function CountryFeatureContent({
                 >
                   <CountryPositionSymbol
                     position={currentIndicator.position}
-                    config={layerData.config}
+                    config={layerInfo.config}
                     inKey={false}
                   />
                   <Box flex={{ grow: 1, shrink: 1 }}>
@@ -238,82 +239,13 @@ export function CountryFeatureContent({
         )}
         <CountryPolicyCommitments
           country={country}
-          layerData={layerData}
+          layerInfo={layerInfo}
           indicatorId={indicatorId}
+          onSelectStatement={onSelectStatement}
         />
       </PanelBody>
     </>
   );
-
-  // <IndicatorLink
-  //   onClick={() => onSetIndicator('details', layerId)}
-  //   active={qe(tab, 'details')}
-  //   disabled={qe(tab, 'details')}
-  //   label={
-  //     <IndicatorLinkAnchor active={qe(tab, 'details')}>
-  //       Details
-  //     </IndicatorLinkAnchor>
-  //   }
-  // />
-  // const feature = findFeature(layerData.data.features, featureId);
-  //
-  // if (!feature) return <LayerContent config={config} header={headerFallback} />;
-  // return (
-  //   <>
-  //     <ListItemHeader
-  //       supTitle={supTitle}
-  //       onClick={() => onSetLayerInfo(config.id, 'countries')}
-  //     />
-  //     <Box margin={{ bottom: 'large' }}>
-  //       <Box
-  //         direction="row"
-  //         justify="between"
-  //         align="center"
-  //         margin={{ bottom: 'xsmall' }}
-  //       >
-  //         <StyledTitle>{getTitle(feature, config, locale)}</StyledTitle>
-  //         <ButtonShare
-  //           plain
-  //           reverse
-  //           icon={
-  //             showLink ? (
-  //               <Close color="inherit" size="large" />
-  //             ) : (
-  //               <LinkIcon color="inherit" size="xlarge" />
-  //             )
-  //           }
-  //           gap="xsmall"
-  //           onClick={() => setShowLink(!showLink)}
-  //           title={intl.formatMessage(messages.showCountryLink)}
-  //         />
-  //       </Box>
-  //       {showLink && (
-  //         <Box
-  //           margin={{ top: 'small', bottom: 'small' }}
-  //           justify="start"
-  //           align="start"
-  //           gap="xsmall"
-  //         >
-  //           <Text size="xxsmall" color="textSecondary">
-  //             <FormattedMessage {...messages.shareCountryLink} />
-  //           </Text>
-  //           <StyledTextInput
-  //             ref={inputRef}
-  //             readOnly
-  //             focusIndicator
-  //             value={getCountryPath(info, locale)}
-  //             onFocus={() => {
-  //               if (inputRef && inputRef.current) {
-  //                 inputRef.current.select();
-  //               }
-  //             }}
-  //           />
-  //         </Box>
-  //       )}
-  //     </Box>
-  //     <CountryPolicyCommitments feature={feature} config={config} />
-  //   </>
-  // );
 }
 // <FormattedMessage {...messages.downloadPolicyData} />
 
@@ -327,7 +259,8 @@ CountryFeatureContent.propTypes = {
   info: PropTypes.string,
   indicatorId: PropTypes.string,
   onSetIndicator: PropTypes.func,
-  layerData: PropTypes.object,
+  onSelectStatement: PropTypes.func,
+  layerInfo: PropTypes.object,
   headerFallback: PropTypes.node,
   intl: intlShape.isRequired,
 };

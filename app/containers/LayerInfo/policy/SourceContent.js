@@ -110,14 +110,16 @@ const StyledButton = styled(p => (
 export function SourceContent({
   sourceId,
   indicatorId,
-  layerData,
+  layerInfo,
   onSetIndicator,
   intl,
+  layerId,
 }) {
   const { locale } = intl;
-  if (!sourceId || !layerData) return null;
+  if (!sourceId || !layerInfo) return null;
+
   const sourceWithPositions = getStatementWithPositionsAndCountries({
-    layerData,
+    layerInfo,
     statementId: sourceId,
     locale,
   });
@@ -172,7 +174,7 @@ export function SourceContent({
                       </TopicTitleShort>
                       <Box direction="row" align="center" gap="small">
                         <Icon color="black" />
-                        <Checkbox checked={active} activeColor="brand" />
+                        <Checkbox inButton checked={active} activeColor="brand" />
                       </Box>
                     </Box>
                     <Box margin={{ top: 'xsmall' }}>
@@ -196,7 +198,7 @@ export function SourceContent({
                     >
                       <CountryPositionSymbol
                         position={p}
-                        config={layerData.config}
+                        config={layerInfo.config}
                         inKey={false}
                       />
                       <Box flex={{ grow: 1, shrink: 1 }}>
@@ -261,7 +263,9 @@ export function SourceContent({
         {sourceWithPositions && sourceWithPositions.countries && sourceWithPositions.countries.length > 0 && (
           <Section>
             <FeatureListCollapsable
+              isSourceList={false}
               items={sourceWithPositions.countries}
+              layerId={layerId}
               title={
                 intl.formatMessage(
                   coreMessages.countries,
@@ -282,7 +286,8 @@ export function SourceContent({
 SourceContent.propTypes = {
   indicatorId: PropTypes.string,
   sourceId: PropTypes.string,
-  layerData: PropTypes.object,
+  layerId: PropTypes.string,
+  layerInfo: PropTypes.object,
   onSetIndicator: PropTypes.func,
   intl: intlShape.isRequired,
 };

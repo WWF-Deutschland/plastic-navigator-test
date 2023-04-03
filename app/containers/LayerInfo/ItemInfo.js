@@ -16,6 +16,7 @@ import { POLICY_LAYER } from 'config';
 import { getAsideInfoWidth } from 'utils/responsive';
 import { startsWith } from 'utils/string';
 import { decodeInfoView, getLayerIdFromView } from 'utils/layers';
+import { setItemInfo } from 'containers/App/actions';
 import { selectLayerByKey } from 'containers/Map/selectors';
 
 import SourceContent from './policy/SourceContent';
@@ -52,8 +53,9 @@ const ContentWrap = styled.div`
 export function ItemInfo({
   onClose,
   item,
-  layerData,
+  layerInfo,
   onSetTopic,
+  onSetItemInfo,
   // onShowLayerPanel,
 }) {
   const cRef = useRef();
@@ -66,7 +68,6 @@ export function ItemInfo({
   }
   const [layerIdX, indicatorId] = layerIndicator.split('_');
   const [type, itemId] = itemType.split(/-(.*)/s);
-
   // prettier-ignore
   return (
     <ResponsiveContext.Consumer>
@@ -83,7 +84,8 @@ export function ItemInfo({
                   type,
                   layerIdX,
                 })}
-                layerData={layerData}
+                layerId={layerIndicator}
+                layerInfo={layerInfo}
                 onClose={onClose}
               />
             )}
@@ -91,13 +93,16 @@ export function ItemInfo({
               <CountryFeatureContent
                 featureId={itemId}
                 indicatorId={indicatorId}
-                layerData={layerData}
+                layerInfo={layerInfo}
                 onSetIndicator={topicId => onSetTopic({
                   topicId,
                   itemId,
                   type,
                   layerIdX,
                 })}
+                onSelectStatement={statementId =>
+                  onSetItemInfo(`${layerIndicator}|source-${statementId}`)
+                }
                 onClose={onClose}
               />
             )}
@@ -113,20 +118,28 @@ ItemInfo.propTypes = {
   item: PropTypes.string,
   onClose: PropTypes.func,
   onSetTopic: PropTypes.func,
-  layerData: PropTypes.object,
+  onSetItemInfo: PropTypes.func,
+  layerInfo: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({
-  layerData: (state, { item }) => {
+  layerInfo: (state, { item }) => {
     const layerId = getLayerIdFromView(item);
     const isPolicy = startsWith(layerId, POLICY_LAYER);
     return selectLayerByKey(state, isPolicy ? POLICY_LAYER : layerId);
   },
 });
+function mapDispatchToProps(dispatch) {
+  return {
+    onSetItemInfo: (id, location) => {
+      dispatch(setItemInfo(id, location));
+    },
+  };
+}
 
 const withConnect = connect(
   mapStateToProps,
-  null,
+  mapDispatchToProps,
 );
 
 export default compose(withConnect)(ItemInfo);
