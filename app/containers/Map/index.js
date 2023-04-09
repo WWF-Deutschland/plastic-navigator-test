@@ -34,6 +34,7 @@ import {
 
 import {
   setLayerInfo,
+  setItemInfo,
   setMapPosition,
   showLayerInfoModule,
 } from 'containers/App/actions';
@@ -52,6 +53,7 @@ import {
   getVectorLayer,
   getIcon,
   getMapPaddedBounds,
+  hideForZoom,
 } from './utils';
 
 import reducer from './reducer';
@@ -129,7 +131,8 @@ export function Map({
   onLoadLayer,
   jsonLayers,
   projects,
-  onLayerInfo,
+  onSetLayerInfo,
+  onSetItemInfo,
   layerInfo,
   size,
   onFeatureHighlight,
@@ -163,6 +166,7 @@ export function Map({
     // console.log('click', e, config, tooltip);
     L.DomEvent.stopPropagation(e);
     const { target, layer } = e;
+    console.log(e)
     const feature = layer || target.feature;
     const eLayerId = target.options.layerId || config.id;
     const eFeatureId = feature.properties.f_id;
@@ -293,6 +297,27 @@ export function Map({
     if (mapRef.current.getZoom() !== zoom) {
       mapRef.current.setZoom(zoom);
     }
+    if (activeLayerIds && layersConfig) {
+      activeLayerIds.forEach(id => {
+        const [configLayerId] = id.split('_');
+        const layer = mapLayers[id] && mapLayers[id].layer;
+        const config = layersConfig.find(
+          c => c.id === id || c.id === configLayerId,
+        );
+        if (config) {
+          if (
+            config.source === 'data' &&
+            (config.type === 'geojson' ||
+              config.type === 'topojson' ||
+              config.type === 'csv' ||
+              config.geometries)
+          ) {
+            // console.log('hideForZoom', config)
+            hideForZoom({ layer, zoom });
+          }
+        }
+      });
+    }
   }, [zoom]);
 
   useEffect(() => {
@@ -331,7 +356,6 @@ export function Map({
           jsonLayers[infoLayerId].data.features,
           infoFeatureId,
         );
-
         if (feature && feature.geometry && feature.geometry.coordinates) {
           let featureBounds;
           if (feature.properties && feature.properties.bounds_nwse) {
@@ -415,7 +439,7 @@ export function Map({
           const project =
             projects &&
             projects.find(
-              p => p.project_id === id.replace(`${PROJECT_CONFIG.id}-`, ''),
+              p => p.project_id === id.replace(`${PROJECT_CONFIG.id}_`, ''),
             );
           if (project && mapLayers[id]) {
             const { layer } = mapLayers[id];
@@ -455,7 +479,7 @@ export function Map({
           const project =
             projects &&
             projects.find(
-              p => p.project_id === id.replace(`${PROJECT_CONFIG.id}-`, ''),
+              p => p.project_id === id.replace(`${PROJECT_CONFIG.id}_`, ''),
             );
           if (project) {
             if (!jsonLayers.projectLocations) {
@@ -513,15 +537,18 @@ export function Map({
               //   areaMaskRef.current.addLayer(layer);
               //   // newMapLayers[id] = { layer, config };
               // }
+              // console.log(jsonLayers[configLayerId]);
               if (jsonLayers[configLayerId] && mapRef) {
                 const layer = getVectorLayer({
                   jsonLayer: jsonLayers[configLayerId],
                   config,
-                  markerEvents,
+                  // markerEvents,
                   indicatorId,
                   dateString: chartDate,
                   // also pass date
                 });
+                // console.log('add json layer', layer, zoom)
+                hideForZoom({ layer, zoom });
                 mapRef.current.addLayer(layer);
                 newMapLayers[id] = { layer, config };
               }
@@ -535,6 +562,7 @@ export function Map({
       onSetMapLayers(newMapLayers);
     }
   }, [activeLayerIds, layersConfig, jsonLayers, projects, chartDate]);
+
   // preload featured layers
   useEffect(() => {
     // console.log('activelayers (according to url) ', activeLayerIds);
@@ -542,6 +570,7 @@ export function Map({
     // console.log('jsonLayers (loaded into state) ', jsonLayers);
     // console.log('Map: layers config present ', !!layersConfig);
     if (currentModule && currentModule.featuredLayer && layersConfig) {
+      // console.log('currentModule', currentModule)
       if (!jsonLayers[currentModule.featuredLayer]) {
         const config = layersConfig.find(
           c => c.id === currentModule.featuredLayer,
@@ -596,19 +625,19 @@ export function Map({
                   ((!mcopy && !highlightCopy) || mcopy === highlightCopy);
                 if (active || infoLayerActive || highlight) {
                   if (highlight) {
-                    icon = getIcon(config.icon, {
+                    icon = getIcon(config, {
                       feature: marker.feature,
                       latlng: marker.getLatLng(),
                       state: 'hover',
                     });
                   } else if (active) {
-                    icon = getIcon(config.icon, {
+                    icon = getIcon(config, {
                       feature: marker.feature,
                       latlng: marker.getLatLng(),
                       state: 'active',
                     });
                   } else if (infoLayerActive) {
-                    icon = getIcon(config.icon, {
+                    icon = getIcon(config, {
                       feature: marker.feature,
                       latlng: marker.getLatLng(),
                       state: 'semi-active',
@@ -617,7 +646,7 @@ export function Map({
                   // if (active) marker.setZIndexOffset(1000);
                 } else {
                   marker.setZIndexOffset(0);
-                  icon = getIcon(config.icon, {
+                  icon = getIcon(config, {
                     feature: marker.feature,
                     latlng: marker.getLatLng(),
                     state: 'default',
@@ -774,6 +803,7 @@ export function Map({
   }, [layersConfig, mapLayers, layerInfo]);
 
   // move active marker into view
+  // TODO: re-enable
   useEffect(() => {
     if (mapLayers && layersConfig) {
       Object.keys(mapLayers).forEach(key => {
@@ -823,8 +853,8 @@ export function Map({
         <PanelKey
           activeLayerIds={activeLayerIds.slice().reverse()}
           layersConfig={layersConfig}
-          onLayerInfo={args => {
-            onLayerInfo(args, layersConfig);
+          onSetLayerInfo={args => {
+            onSetLayerInfo(args, layersConfig);
           }}
           jsonLayers={jsonLayers}
           currentModule={currentModule}
@@ -838,9 +868,32 @@ export function Map({
           config={tooltip.config}
           layerOptions={tooltip.options}
           onClose={() => setTooltip(null)}
-          onFeatureClick={args => {
+          onFeatureClick={() => {
             setTooltip(null);
-            onLayerInfo(args, layersConfig);
+            const { id } = tooltip.config;
+            if (tooltip.feature && tooltip.feature.properties) {
+              if (id === PROJECT_CONFIG.id) {
+                // onSetProjectInfo({ projectId, locationId });
+                const { infoPath, infoArg } = tooltip.feature;
+                if (infoArg === 'item') {
+                  onSetItemInfo(infoPath);
+                } else {
+                  onSetLayerInfo({
+                    infoPath,
+                    copy: tooltip.options ? tooltip.options.copy : null,
+                  });
+                }
+              } else {
+                // TODO country
+                // TODO river, gyre etc
+                onSetLayerInfo({
+                  layerId: id,
+                  copy: tooltip.options ? tooltip.options.copy : null,
+                  infoArg: 'info',
+                  infoPath: id,
+                });
+              }
+            }
           }}
         />
       )}
@@ -890,7 +943,8 @@ Map.propTypes = {
   currentModule: PropTypes.object,
   onSetMapLayers: PropTypes.func,
   onLoadLayer: PropTypes.func,
-  onLayerInfo: PropTypes.func,
+  onSetLayerInfo: PropTypes.func,
+  onSetItemInfo: PropTypes.func,
   onFeatureHighlight: PropTypes.func,
   onMapMove: PropTypes.func,
   highlightFeature: PropTypes.string,
@@ -918,7 +972,8 @@ const mapStateToProps = createStructuredSelector({
   chartDate: state => selectChartDate(state),
 });
 
-function mapDispatchToProps(dispatch, ownProps) {
+// function mapDispatchToProps(dispatch, ownProps) {
+function mapDispatchToProps(dispatch) {
   return {
     onLoadLayer: (key, config, args) => {
       dispatch(loadLayer(key, config, args));
@@ -926,19 +981,23 @@ function mapDispatchToProps(dispatch, ownProps) {
     onSetMapLayers: layers => {
       dispatch(setMapLayers(layers));
     },
-    onLayerInfo: ({ layer, feature, copy }, layersConfig) => {
-      dispatch(setLayerInfo(layer, feature, copy));
-      const { currentModule } = ownProps;
-      const config = layersConfig && layersConfig.find(l => l.id === layer);
-      const isModuleLayer =
-        config &&
-        currentModule &&
-        currentModule.featuredLayer &&
-        (currentModule.featuredLayer === config['content-default'] ||
-          currentModule.featuredLayer === layer);
-      if (!isModuleLayer) {
-        dispatch(showLayerInfoModule());
-      }
+    onSetItemInfo: infoPath => {
+      dispatch(setItemInfo(infoPath));
+      dispatch(showLayerInfoModule());
+    },
+    onSetLayerInfo: args => {
+      dispatch(setLayerInfo(args));
+      dispatch(showLayerInfoModule());
+      // const { currentModule } = ownProps;
+      // const config = layersConfig && layersConfig.find(l => l.id === layerId);
+      // const isModuleLayer =
+      //   config &&
+      //   currentModule &&
+      //   currentModule.featuredLayer &&
+      //   (currentModule.featuredLayer === config['content-default'] ||
+      //     currentModule.featuredLayer === layerId);
+      // if (!isModuleLayer) {
+      // }
     },
     onFeatureHighlight: args => {
       const layer = args ? args.layer : null;
