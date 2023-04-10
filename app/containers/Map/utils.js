@@ -10,6 +10,7 @@ import { excludeCountryFeatures } from 'containers/LayerInfo/policy/utils';
 import 'leaflet.vectorgrid';
 
 import { PROJECT_CONFIG, MAP_OPTIONS } from 'config';
+import { DEFAULT_LOCALE } from 'i18n';
 
 export const getRange = (allFeatures, attribute) =>
   allFeatures.reduce(
@@ -238,7 +239,13 @@ export const getVectorGridStyle = (
   };
 };
 const featureInteractive = (e, config) => {
+  // console.log('featureInteractive config', config)
+  if (config.indicators && e.layer) {
+    const { properties } = e.layer;
+    return properties && properties.indicator;
+  }
   if (
+    e.layer &&
     config.tooltip &&
     config.tooltip.values &&
     config.featureStyle.multiple &&
@@ -247,7 +254,7 @@ const featureInteractive = (e, config) => {
     // figure out feature values
     const ps = config.featureStyle.property.split('.');
     const { properties } = e.layer;
-    const propertyArray = properties[ps[0]];
+    const propertyArray = properties && properties[ps[0]];
     const values = propertyArray && uniq(propertyArray.map(p => p[ps[1]]));
     return intersection(config.tooltip.values, values).length > 0;
   }
@@ -269,7 +276,11 @@ const getPolygonVectorGrid = ({ data, config, markerEvents, state }) => {
     interactive: state !== 'hover' && state !== 'active',
     getFeatureId: f => f.properties.f_id,
   });
-  if (markerEvents) {
+  if (state === 'mask') {
+    vectorGrid.on({
+      click: () => null,
+    });
+  } else if (markerEvents) {
     vectorGrid.on({
       mouseover: e => {
         if (featureInteractive(e, config) && markerEvents.mouseover) {
@@ -343,9 +354,16 @@ const getPolygonLayer = ({ data, config, markerEvents, state }) => {
 
 export const getIcon = (
   config,
-  { feature, latlng, state = 'default' } = {},
+  { feature, latlng, state = 'default', hide } = {},
 ) => {
   const { icon } = config;
+  if (hide) {
+    return L.divIcon({
+      className: 'mpx-map-icon-uri',
+      iconSize: [0, 0],
+      html: '<img style="width:100%;" src="">',
+    });
+  }
   if (icon && icon.datauri) {
     const sizeForState = icon.size[state] || icon.size.default || icon.size;
     const iconSize = [
@@ -440,14 +458,20 @@ export const getIcon = (
         feature.properties.indicator &&
         feature.properties.indicator.value) ||
       0;
-    // console.log('value', value, state)
 
     // check for property dependent icon
-    const uri = iconsByValue[value] ? iconsByValue[value][state] : '';
-    // console.log('uri', uri)
+    if (iconsByValue[value]) {
+      const uri = iconsByValue[value][state];
+      // console.log('uri', uri)
+      return L.divIcon({
+        ...options,
+        html: `<img style="width:100%;" src="${uri}">`,
+      });
+    }
     return L.divIcon({
       ...options,
-      html: `<img style="width:100%;" src="${uri}">`,
+      iconSize: [0, 0],
+      html: '<img style="width:100%;" src="">',
     });
   }
   return L.icon();
@@ -614,6 +638,7 @@ const prepareGeometry = ({
   tables,
   indicatorId,
   dateString,
+  locale,
 }) => {
   if (config.indicators) {
     const geometryX = {
@@ -631,6 +656,7 @@ const prepareGeometry = ({
             topicId: indicatorId,
             dateString,
             tables,
+            locale,
           });
           return {
             type: gf.type,
@@ -639,6 +665,23 @@ const prepareGeometry = ({
               ...gf.properties,
               ...feature,
               indicator: position,
+              tooltip: {
+                supTitle: position ? position.topic : 'no topic',
+                title:
+                  gf.properties[`name_${locale}`] ||
+                  gf.properties[`name_${DEFAULT_LOCALE}`],
+                infoArg: 'item',
+                infoPath: `${config.id}_${indicatorId}|country-${feature.code}`,
+                id: feature.code,
+                more: true,
+                content:
+                  position &&
+                  position.latestPosition &&
+                  (position.latestPosition[`position_short_${locale}`] ||
+                    position.latestPosition[
+                      `position_short_${DEFAULT_LOCALE}`
+                    ]),
+              },
             },
           };
         }
@@ -657,6 +700,7 @@ export const getVectorLayer = ({
   state,
   indicatorId,
   dateString,
+  locale,
 }) => {
   const { data } = jsonLayer;
   // polyline
@@ -685,9 +729,10 @@ export const getVectorLayer = ({
   if (config.render && config.render.type === 'scaledCircle') {
     return getCircleLayer({ data, config, markerEvents, state });
   }
+  let layers;
   if (data.features && data.geometries && data.geometries.length > 0) {
     // cons/t geometry = data.geometries[0]; // for now take first one
-    const layers = data.geometries.map(geometry => {
+    layers = data.geometries.map(geometry => {
       const geometryX = prepareGeometry({
         geometry,
         config,
@@ -695,6 +740,7 @@ export const getVectorLayer = ({
         tables: data.tables,
         indicatorId,
         dateString,
+        locale,
       });
       if (geometry.config.render.type === 'area') {
         return getPolygonLayer({
@@ -712,11 +758,23 @@ export const getVectorLayer = ({
           state,
         });
       }
-      return null;
+      return [];
     });
-    return L.layerGroup(layers);
+    if (data.features && data.geometryMasks && data.geometryMasks.length > 0) {
+      const maskLayers = data.geometryMasks.map(geometry => {
+        if (geometry.config.render.type === 'area') {
+          return getPolygonLayer({
+            data: geometry,
+            config,
+            state: 'mask',
+          });
+        }
+        return null;
+      });
+      layers = [...layers, ...maskLayers];
+    }
   }
-  return null;
+  return layers ? L.layerGroup(layers) : null;
 };
 const getProjectData = ({ data, project }) => {
   const projectFeatures = data.features.filter(feature =>
@@ -761,7 +819,6 @@ export const getProjectLayer = ({ jsonLayer, project, markerEvents }) => {
       ...config.style,
     };
     const dataX = getProjectData({ data, project });
-    console.log('dataX', dataX)
     const jsonLlayer = L.geoJSON(dataX, {
       // filter: feature => filterByProject(feature, project),
       pointToLayer: (feature, latlng) => L.marker(latlng, options).on(events),
@@ -875,7 +932,7 @@ export const hideForZoom = ({ layer, zoom }) => {
                 getIcon(sublayer.options.config, { feature: feature.feature }),
               );
             } else {
-              feature.setIcon(getIcon(sublayer.options.config));
+              feature.setIcon(getIcon(sublayer.options.config, { hide: true }));
             }
           });
         } else {
@@ -890,7 +947,9 @@ export const hideForZoom = ({ layer, zoom }) => {
                       }),
                     );
                   } else {
-                    feature.setIcon(getIcon(sublayer2.options.config));
+                    feature.setIcon(
+                      getIcon(sublayer2.options.config, { hide: true }),
+                    );
                   }
                 });
               }

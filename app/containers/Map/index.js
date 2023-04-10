@@ -7,7 +7,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-// import { FormattedMessage } from 'react-intl';
+import { injectIntl, intlShape } from 'react-intl';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 import styled from 'styled-components';
@@ -144,9 +144,11 @@ export function Map({
   mview,
   layerInfoActive,
   chartDate,
+  intl,
 }) {
   useInjectReducer({ key: 'map', reducer });
   useInjectSaga({ key: 'map', saga });
+  const { locale } = intl;
   const [tooltip, setTooltip] = useState(null);
   const [tilesLoading, setTilesLoading] = useState(false);
   const [zoom, setZoom] = useState(MAP_OPTIONS.ZOOM.INIT);
@@ -155,7 +157,7 @@ export function Map({
   const areaHighlightRef = useRef(null);
   const areaTooltipRef = useRef(null);
   const areaInfoRef = useRef(null);
-  const areaMaskRef = useRef(null);
+  // const areaMaskRef = useRef(null);
   const [infoLayerId, infoFeatureId, infoCopy] = decodeInfoView(layerInfo);
   const [highlightLayerId, highlightFeatureId, highlightCopy] = decodeInfoView(
     highlightFeature,
@@ -165,11 +167,21 @@ export function Map({
   const showTooltip = (e, config) => {
     // console.log('click', e, config, tooltip);
     L.DomEvent.stopPropagation(e);
-    const { target, layer } = e;
-    console.log(e)
+    const {
+      target, // the layer
+      layer, // the feature
+    } = e;
+    // console.log('showTooltip target', target)
+    // console.log('showTooltip layer', layer)
+    // console.log('showTooltip config', config)
     const feature = layer || target.feature;
     const eLayerId = target.options.layerId || config.id;
-    const eFeatureId = feature.properties.f_id;
+    let eFeatureId;
+    if (feature.properties.f_id) {
+      eFeatureId = feature.properties.f_id;
+    } else if (feature.properties.tooltip) {
+      eFeatureId = feature.properties.tooltip.id;
+    }
     let anchor = e.containerPoint;
     const mapSize = mapRef.current ? mapRef.current.getSize() : [0, 0];
     const direction = {
@@ -209,7 +221,9 @@ export function Map({
   // const onMarkerOut = (e, config) => {
   // console.log('out', e, config, tooltip);
   const onMarkerOut = () => onFeatureHighlight(null);
-  const onMarkerClick = showTooltip;
+  const onMarkerClick = (e, config) => {
+    showTooltip(e, config);
+  };
 
   const markerEvents = {
     mouseover: onMarkerOver,
@@ -271,11 +285,11 @@ export function Map({
     areaHighlightRef.current = L.layerGroup();
     areaTooltipRef.current = L.layerGroup();
     areaInfoRef.current = L.layerGroup();
-    areaMaskRef.current = L.layerGroup();
+    // areaMaskRef.current = L.layerGroup();
     areaHighlightRef.current.addTo(mapRef.current);
     areaTooltipRef.current.addTo(mapRef.current);
     areaInfoRef.current.addTo(mapRef.current);
-    areaMaskRef.current.addTo(mapRef.current);
+    // areaMaskRef.current.addTo(mapRef.current);
     mapRef.current.on('zoomend', () => {
       setZoom(mapRef.current.getZoom());
     });
@@ -523,31 +537,16 @@ export function Map({
               if (!jsonLayers[configLayerId]) {
                 onLoadLayer(configLayerId, config);
               }
-              // kick off loading mask layers
-              // const maskId = `${id}-mask`;
-              // if (config.mask) {
-              //   onLoadLayer(maskId, config, { mask: true });
-              // }
-              // if (jsonLayers[maskId] && areaMaskRef) {
-              //   const layer = getVectorLayer({
-              //     jsonLayer: jsonLayers[maskId],
-              //     config,
-              //     state: 'mask',
-              //   });
-              //   areaMaskRef.current.addLayer(layer);
-              //   // newMapLayers[id] = { layer, config };
-              // }
-              // console.log(jsonLayers[configLayerId]);
               if (jsonLayers[configLayerId] && mapRef) {
                 const layer = getVectorLayer({
                   jsonLayer: jsonLayers[configLayerId],
                   config,
-                  // markerEvents,
+                  markerEvents,
                   indicatorId,
                   dateString: chartDate,
+                  locale,
                   // also pass date
                 });
-                // console.log('add json layer', layer, zoom)
                 hideForZoom({ layer, zoom });
                 mapRef.current.addLayer(layer);
                 newMapLayers[id] = { layer, config };
@@ -872,17 +871,25 @@ export function Map({
             setTooltip(null);
             const { id } = tooltip.config;
             if (tooltip.feature && tooltip.feature.properties) {
-              if (id === PROJECT_CONFIG.id) {
+              let { infoPath, infoArg } = tooltip.feature;
+              infoPath =
+                (tooltip.feature.properties &&
+                  tooltip.feature.properties.tooltip &&
+                  tooltip.feature.properties.tooltip.infoPath) ||
+                infoPath;
+              infoArg =
+                (tooltip.feature.properties &&
+                  tooltip.feature.properties.tooltip &&
+                  tooltip.feature.properties.tooltip.infoArg) ||
+                infoArg;
+              if (infoArg === 'item' && infoPath) {
+                onSetItemInfo(infoPath);
+              } else if (id === PROJECT_CONFIG.id) {
                 // onSetProjectInfo({ projectId, locationId });
-                const { infoPath, infoArg } = tooltip.feature;
-                if (infoArg === 'item') {
-                  onSetItemInfo(infoPath);
-                } else {
-                  onSetLayerInfo({
-                    infoPath,
-                    copy: tooltip.options ? tooltip.options.copy : null,
-                  });
-                }
+                onSetLayerInfo({
+                  infoPath,
+                  copy: tooltip.options ? tooltip.options.copy : null,
+                });
               } else {
                 // TODO country
                 // TODO river, gyre etc
@@ -955,6 +962,7 @@ Map.propTypes = {
   loading: PropTypes.bool,
   layerInfoActive: PropTypes.bool,
   chartDate: PropTypes.string,
+  intl: intlShape,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -1016,4 +1024,4 @@ const withConnect = connect(
   mapDispatchToProps,
 );
 
-export default compose(withConnect)(Map);
+export default compose(withConnect)(injectIntl(Map));
