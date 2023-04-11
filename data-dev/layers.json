@@ -382,7 +382,7 @@
     },
     "geometries": [
       {
-        "default": "all",
+        "settings": { "active": true },
         "feature": "code",
         "type": "topojson",
         "feature-type": "Polygon",
@@ -394,7 +394,11 @@
         "styles-by-value": "inherit"
       },
       {
-        "default-max-zoom": ["marker_max_zoom"],
+        "settings": {
+          "active": true,
+          "max-zoom": true
+        },
+        "default-max-zoom": "marker_max_zoom",
         "feature": "code",
         "type": "geojson",
         "feature-type": "Point",
