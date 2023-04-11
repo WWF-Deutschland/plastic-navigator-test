@@ -489,12 +489,22 @@ const filterFeatureMaxZoom = ({ feature, zoom, config }) => {
   return false;
 };
 
-const getPointLayer = ({ data, config, markerEvents }) => {
+const getPointLayer = ({ data, config, markerEvents, layerGeoSettings }) => {
   const layer = L.featureGroup(null);
   const options = {
     ...config.style,
     zIndex: config['z-index'] || 1,
   };
+  const hasZoomCheck =
+    config['default-max-zoom'] && config.settings && config.settings.zoom;
+  let doZoomCheck = hasZoomCheck;
+  if (doZoomCheck) {
+    doZoomCheck = config.settings.zoom.default;
+  }
+  if (doZoomCheck && layerGeoSettings.zoom) {
+    doZoomCheck =
+      qe(layerGeoSettings.zoom, 1) || layerGeoSettings.zoom === 'true';
+  }
   const events = {
     mouseover: e =>
       markerEvents.mouseover ? markerEvents.mouseover(e, config) : null,
@@ -505,7 +515,7 @@ const getPointLayer = ({ data, config, markerEvents }) => {
   // prettier-ignore
   const jsonLayer = L.geoJSON(data, {
     config,
-    checkZoom: config['default-max-zoom']
+    checkZoom: doZoomCheck
       ? (feature, zoom) => filterFeatureMaxZoom({ feature, zoom, config})
       : null,
     pointToLayer: (feature, latlng) =>
@@ -525,7 +535,7 @@ const getPointLayer = ({ data, config, markerEvents }) => {
     const layerWest = L.geoJSON(data, {
       copy: 'west',
       config,
-      checkZoom: config['default-max-zoom']
+      checkZoom: doZoomCheck
         ? (feature, zoom) => filterFeatureMaxZoom({ feature, zoom, config })
         : null,
       pointToLayer: (feature, latlng) =>
@@ -546,7 +556,7 @@ const getPointLayer = ({ data, config, markerEvents }) => {
     const layerEast = L.geoJSON(data, {
       copy: 'east',
       config,
-      checkZoom: config['default-max-zoom']
+      checkZoom: doZoomCheck
         ? (feature, zoom) => filterFeatureMaxZoom({ feature, zoom, config })
         : null,
       pointToLayer: (feature, latlng) =>
@@ -693,6 +703,19 @@ const prepareGeometry = ({
   return geometry;
 };
 
+const getLayerGeoSettings = (layerSettings, index) =>
+  layerSettings.reduce((memo, setting) => {
+    const [geoIndex, keyValue] = setting.split('-');
+    if (`g${index}` === geoIndex) {
+      const [key, value] = keyValue.split(':');
+      return {
+        ...memo,
+        [key]: value,
+      };
+    }
+    return memo;
+  }, {});
+
 export const getVectorLayer = ({
   jsonLayer,
   config,
@@ -701,6 +724,7 @@ export const getVectorLayer = ({
   indicatorId,
   dateString,
   locale,
+  layerGeometrySettings,
 }) => {
   const { data } = jsonLayer;
   // polyline
@@ -731,8 +755,16 @@ export const getVectorLayer = ({
   }
   let layers;
   if (data.features && data.geometries && data.geometries.length > 0) {
+    // figure out any settings for current layer
+    const layerSettings = layerGeometrySettings.reduce((memo, lg) => {
+      const [layerId, rest] = lg.split('_');
+      if (config.id === layerId) {
+        return [...memo, rest];
+      }
+      return memo;
+    }, []);
     // cons/t geometry = data.geometries[0]; // for now take first one
-    layers = data.geometries.map(geometry => {
+    layers = data.geometries.reduce((memoLayers, geometry, index) => {
       const geometryX = prepareGeometry({
         geometry,
         config,
@@ -742,25 +774,52 @@ export const getVectorLayer = ({
         dateString,
         locale,
       });
-      if (geometry.config.render.type === 'area') {
-        return getPolygonLayer({
-          data: geometryX,
-          config,
-          markerEvents,
-          state,
-        });
+      const layerGeoSettings = getLayerGeoSettings(layerSettings, index);
+      let active = true;
+      if (
+        geometry.config.settings &&
+        geometry.config.settings.active &&
+        geometry.config.settings.active.default
+      ) {
+        active = geometry.config.settings.active.default;
       }
-      if (geometry.config.render.type === 'marker') {
-        return getPointLayer({
-          data: geometryX,
-          config: geometry.config,
-          markerEvents,
-          state,
-        });
+      if (layerGeoSettings && typeof layerGeoSettings.active !== 'undefined') {
+        active =
+          qe(layerGeoSettings.active, 1) || layerGeoSettings.active === 'true';
       }
-      return [];
-    });
-    if (data.features && data.geometryMasks && data.geometryMasks.length > 0) {
+      if (active) {
+        if (geometry.config.render.type === 'area') {
+          return [
+            ...memoLayers,
+            getPolygonLayer({
+              data: geometryX,
+              config,
+              markerEvents,
+              state,
+            }),
+          ];
+        }
+        if (geometry.config.render.type === 'marker') {
+          return [
+            ...memoLayers,
+            getPointLayer({
+              data: geometryX,
+              config: geometry.config,
+              markerEvents,
+              state,
+              layerGeoSettings,
+            }),
+          ];
+        }
+      }
+      return memoLayers;
+    }, []);
+    if (
+      layers.length > 0 &&
+      data.features &&
+      data.geometryMasks &&
+      data.geometryMasks.length > 0
+    ) {
       const maskLayers = data.geometryMasks.map(geometry => {
         if (geometry.config.render.type === 'area') {
           return getPolygonLayer({
