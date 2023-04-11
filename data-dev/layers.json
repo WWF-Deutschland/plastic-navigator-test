@@ -382,7 +382,16 @@
     },
     "geometries": [
       {
-        "settings": { "active": true },
+        "settings": {
+          "active": {
+            "default": true,
+            "type": "checkbox",
+            "label": {
+              "en": "Show areas",
+              "de": "Show areas"
+            }
+          }
+        },
         "feature": "code",
         "type": "topojson",
         "feature-type": "Polygon",
@@ -395,8 +404,32 @@
       },
       {
         "settings": {
-          "active": true,
-          "max-zoom": true
+          "active": {
+            "default": true,
+            "type": "checkbox",
+            "label": {
+              "en": "Show markers",
+              "de": "Show markers"
+            }
+          },
+          "max-zoom": {
+            "default": true,
+            "type": "toggle",
+            "options": {
+              "true": {
+                "label": {
+                  "en": "Small states only",
+                  "de": "Small states only"
+                }
+              },
+              "false": {
+                "label": {
+                  "en": "All states",
+                  "de": "All states"
+                }
+              }
+            }
+          }
         },
         "default-max-zoom": "marker_max_zoom",
         "feature": "code",
