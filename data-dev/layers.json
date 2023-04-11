@@ -412,7 +412,7 @@
               "de": "Show markers"
             }
           },
-          "max-zoom": {
+          "zoom": {
             "default": true,
             "type": "toggle",
             "options": {
