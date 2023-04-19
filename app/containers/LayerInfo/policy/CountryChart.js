@@ -4,7 +4,7 @@
  *
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
 import styled from 'styled-components';
@@ -83,7 +83,7 @@ const KeyAreaWrap = styled.div`
 `;
 
 const KeyStatements = styled(p => (
-  <Box direction="row" align="center" {...p} />
+  <Box direction="row" align="center" justify="center" {...p} />
 ))`
   height: 18px;
   width: 18px;
@@ -176,7 +176,7 @@ export function CountryChart({
   onSelectStatement,
   indicatorId,
   intl,
-  // onSetChartDate,
+  onSetChartDate,
   // chartDate,
 }) {
   useInjectSaga({ key: 'map', saga });
@@ -187,40 +187,35 @@ export function CountryChart({
   const [mouseOverSource, setMouseOverSource] = useState(null);
 
   const { locale } = intl;
-  if (!layerInfo || !layerInfo.data) {
-    return null;
-  }
-  // const featuresEx = excludeCountryFeatures(config, layer.data.features);
-  //
-  // // console.log(layer.data.features)
-  // const countries = featuresToCountriesWithStrongestPosition(
-  //   config,
-  //   featuresEx,
-  //   locale,
-  // );
-  //
-  // console.log('countryPositions', countryPositions)
-  // // figure out data: positions over time
-  // const countryStats = getCountryPositionStatsForTopicAndDate({
-  //   indicatorId,
-  //   layerInfo,
-  //   includeOpposing: false,
-  //   includeWithout: false,
-  //   includeHidden: false,
-  // });
-  const positionsOverTime = getCountryPositionsOverTimeFromCountryFeatures({
-    indicatorId,
-    layerInfo,
-    includeOpposing: false,
-    includeWithout: false,
-    includeHidden: false,
-  });
+
+  const positionsOverTime =
+    layerInfo &&
+    layerInfo.data &&
+    getCountryPositionsOverTimeFromCountryFeatures({
+      indicatorId,
+      layerInfo,
+      includeOpposing: false,
+      includeWithout: false,
+      includeHidden: false,
+    });
   // console.log('positionsOverTime', positionsOverTime)
   // console.log('countryStats', countryStats)
   // console.log('positionsOverTime', positionsOverTime)
-  const lastDate = Object.keys(positionsOverTime)[
-    Object.keys(positionsOverTime).length - 1
-  ];
+  const lastDate =
+    layerInfo &&
+    layerInfo.data &&
+    Object.keys(positionsOverTime)[Object.keys(positionsOverTime).length - 1];
+
+  useEffect(() => {
+    if (lastDate && onSetChartDate) {
+      onSetChartDate(lastDate);
+    }
+  }, [lastDate]);
+
+  if (!layerInfo || !layerInfo.data) {
+    return null;
+  }
+
   // prettier-ignore
   const mouseOverEffect = mouseOver;
   const currentDate =
@@ -312,7 +307,7 @@ export function CountryChart({
   const dataMouseOverCover =
     mouseOverEffect &&
     nearestXDate &&
-    getMouseOverCover({ chartData, currentDate, maxDate: lastDate });
+    getMouseOverCover({ chartData, minDate: currentDate, maxDate: lastDate });
   // console.log(getFlatCSVFromSources(sources, locale))
 
   // prettier-ignore
@@ -338,16 +333,10 @@ export function CountryChart({
             >
               <Box justify="between" gap="xsmall">
                 <Box gap="ms">
-                  <Box gap="xsmall">
-                    <Box
-                      direction="row"
-                      gap="xsmall"
-                      justify="start"
-                      flex={{ shrink: 0 }}
-                    >
+                  <Box gap={size === 'small' ? 'small' : 'xsmall'} responsive={false}>
+                    <Box justify="start" flex={{ shrink: 0 }} >
                       <Text
                         size={isMinSize(size, 'medium') ? 'xxsmall' : 'xxxsmall'}
-                        textAlign="end"
                         color="textSecondary"
                       >
                         <FormattedMessage
@@ -682,56 +671,6 @@ export function CountryChart({
       )}
     </ResponsiveContext.Consumer>
   );
-  // {/* source dots */}
-  // <MarkSeries
-  //   data={chartDataSources}
-  //   size={3}
-  //   colorType="literal"
-  //   style={{ opacity: 0.7 }}
-  // />
-  // {/* highlight source dot */}
-  // {mouseOverSource && (
-  //   <MarkSeries
-  //     data={[mouseOverSource]}
-  //     size={4}
-  //     colorType="literal"
-  //     style={{ opacity: 1, pointerEvents: 'none' }}
-  //   />
-  // )}
-  // {mouseOverSource && (
-  //   <Hint
-  //     value={mouseOverSource}
-  //     align={{ vertical: 'top', horizontal: 'auto' }}
-  //     style={{
-  //       transform: 'translateY(-10px)',
-  //       minWidth: '100px',
-  //       maxWidth: '120px',
-  //     }}
-  //   >
-  //     <Box elevation="small" background="white" pad="xsmall" gap="xsmall">
-  //         TODO: tooltip for one or more statements with link
-  //     </Box>
-  //   </Hint>
-  // )}
-  // {/* source dots interactions */}
-  // <MarkSeries
-  // data={chartDataSources}
-  // size={5}
-  // colorType="literal"
-  // style={{ opacity: 0, cursor: 'pointer' }}
-  // onNearestX={point => {
-  //   if (point) {
-  //     setNearestXDate(point.sdate)
-  //   }
-  // }}
-  // onValueMouseOver={point => {
-  //   setMouseOverSource(point)
-  // }}
-  // onValueMouseOut={() => {
-  //   setNearestXDate(null)
-  //   setMouseOverSource(null)
-  // }}
-  // />
 }
 
 CountryChart.propTypes = {
@@ -740,7 +679,7 @@ CountryChart.propTypes = {
   indicatorId: PropTypes.string,
   onSelectStatement: PropTypes.func,
   intl: intlShape.isRequired,
-  // onSetChartDate: PropTypes.func,
+  onSetChartDate: PropTypes.func,
   // chartDate: PropTypes.string,
 };
 

@@ -15,12 +15,13 @@ import { DEFAULT_LOCALE } from 'i18n';
 
 import styled from 'styled-components';
 // import { Box, Button, ResponsiveContext } from 'grommet';
-import { Text, Box, Button } from 'grommet';
+import { Text, Box, Button, ResponsiveContext } from 'grommet';
 // import { getAsideWidth, isMaxSize } from 'utils/responsive';
 import { decodeInfoView, getLayerIdFromView } from 'utils/layers';
 import { MODULES, POLICY_LAYER } from 'config';
 
 import ModuleWrap from 'components/ModuleWrap';
+import Modal from 'components/Modal';
 import { Policy } from 'components/Icons';
 import LayerInfo from 'containers/LayerInfo';
 import ItemInfo from 'containers/LayerInfo/ItemInfo';
@@ -80,49 +81,13 @@ const ShowButton = styled(p => <Button plain reverse {...p} />)`
   }
 `;
 
-const Inner = styled.div`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  background: rgba(0, 0, 0, 0.5);
-  pointer-events: all;
-  overflow-y: auto;
-`;
-
-const Overview = styled(p => (
-  <Box
-    flex={{ shrink: 0 }}
-    pad="medium"
-    background="white"
-    elevation="large"
-    {...p}
-  />
-))`
-  margin: 40px auto;
-  width: 100%;
-  @media (min-width: ${({ theme }) => theme.sizes.medium.minpx}) {
-    width: ${({ theme }) => theme.dimensions.modal.width[1]}px;
-  }
-  @media (min-width: ${({ theme }) => theme.sizes.large.minpx}) {
-    width: ${({ theme }) => theme.dimensions.modal.width[2]}px;
-  }
-  @media (min-width: ${({ theme }) => theme.sizes.xlarge.minpx}) {
-    width: ${({ theme }) => theme.dimensions.modal.width[3]}px;
-  }
-  @media (min-width: ${({ theme }) => theme.sizes.xxlarge.minpx}) {
-    width: ${({ theme }) => theme.dimensions.modal.width[4]}px;
-  }
-`;
-
 const TitleShort = styled(Text)`
   font-family: 'wwfregular';
   text-transform: uppercase;
   line-height: 1;
   margin-top: 3px;
 `;
-const Title = styled(p => <Text size="xxxlarge" {...p} />)`
+const Title = styled(p => <Text {...p} />)`
   font-family: 'wwfregular';
   text-transform: uppercase;
   line-height: 1;
@@ -144,6 +109,8 @@ const TitleSelectArchived = styled(p => <Text size="large" {...p} />)`
   border-bottom: 1px solid rgb(218, 218, 218);
   padding-bottom: 10px;
 `;
+
+const TopicCardWrap = styled(p => <Box {...p} />)``;
 
 const COMPONENT_KEY = 'mpol';
 
@@ -262,6 +229,7 @@ export function ModulePolicy({
     moduleLayer.data.tables.topics.data &&
     moduleLayer.data.tables.topics.data.data.filter(t => t.archived === '1');
 
+  const size = React.useContext(ResponsiveContext);
   return (
     <div>
       <Helmet>
@@ -271,8 +239,8 @@ export function ModulePolicy({
       </Helmet>
       <ModuleWrap ref={ref}>
         {!topicSelected && layerConfig && ref && (
-          <Inner>
-            <Overview className="mpx-module-overview">
+          <Modal
+            content={
               <LayerContent
                 header={
                   <Box>
@@ -286,7 +254,7 @@ export function ModulePolicy({
                       </Box>
                     </Box>
                     <Box align="center" margin={{ vertical: 'small' }}>
-                      <Title>
+                      <Title size={size === 'small' ? 'xxlarge' : 'xxxlarge'}>
                         {layerConfig.title[locale] ||
                           layerConfig.title[DEFAULT_LOCALE]}
                       </Title>
@@ -305,7 +273,11 @@ export function ModulePolicy({
                         <TitleSelect>
                           <FormattedMessage {...messages.selectTopics} />
                         </TitleSelect>
-                        <Box direction="row" margin={{ top: 'small' }} wrap>
+                        <TopicCardWrap
+                          direction="row"
+                          margin={{ top: 'small' }}
+                          wrap
+                        >
                           {topicsPrimary &&
                             topicsPrimary.map(t => (
                               <TopicCard
@@ -320,7 +292,7 @@ export function ModulePolicy({
                                 }
                               />
                             ))}
-                        </Box>
+                        </TopicCardWrap>
                       </Box>
                     ),
                   },
@@ -355,8 +327,8 @@ export function ModulePolicy({
                   },
                 ]}
               />
-            </Overview>
-          </Inner>
+            }
+          />
         )}
         {topicSelected && (
           <Buttons>
