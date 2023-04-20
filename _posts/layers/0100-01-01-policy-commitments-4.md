@@ -6,13 +6,13 @@ lang: en
 title: Implementation support
 ---
 
-Timely, predictable, accessible, and sufficient support, including both financial and technical resources, technology transfer and capacity strengthening, is particularly important for effective implementation of the treaty’s core obligations and control measures. To ensure that the Parties start out from a more level playing field, primary implementation assistance (e.g., technical, and financial assistance) should be established right at the beginning.
+Timely, predictable, accessible, and sufficient support, including both financial and technical resources, technology transfer and capacity strengthening, is particularly important for effective implementation of the treaty’s core obligations and control measures. This is one of the indispensable components of an ambitious treaty to end plastic pollution. To ensure that the Parties start out from a more level playing field, primary implementation assistance (e.g., technical, and financial assistance) should be established right at the beginning.
 
 For example, the treaty may include, _inter alia_, an obligation to provide implementation assistance to developing countries and economies in transition, financial mechanisms to directly support the implementation of control measures, for example through a dedicated multilateral fund (e.g., similar to that of the Montreal Protocol on Substances that Deplete the Ozone Layer), and mechanisms to facilitate transfers of technical know-how and technologies to developing countries and economies in transition.
 
 The Global Plastic Navigator tracks the states’ level of support for the treaty’s inclusion of mechanisms to provide necessary support to countries for the effective implementation of their obligations.
 
-States’ convergence on the need to ensure necessary support to countries for the effective implementation of their obligations is taken as one of the indicators for the development of an ambitious and effective treaty to end plastic pollution.
+States’ convergence on the need to ensure necessary support to countries for the effective implementation of their obligations is taken as one of the key indicators for the development of an ambitious and effective treaty to end plastic pollution.
 
 
 
