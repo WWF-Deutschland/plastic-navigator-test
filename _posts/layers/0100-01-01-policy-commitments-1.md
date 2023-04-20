@@ -6,11 +6,11 @@ lang: en
 title: Ban & phase out
 ---
 
-Where possible, the treaty must put in place specific, binding measures to significantly reduce or eliminate the production and consumption of plastic categories of concern. In line with a risk-based approach, initial emphasis should be on the products, additives or materials that generate the largest pressure on the system, and pose the highest risks. Priority lists of such products, additives or materials should urgently be developed.
+Where possible, the treaty must put in place specific, binding measures to significantly reduce or eliminate the production and consumption of plastic categories of concern. This is one of the indispensable components of an ambitious treaty to end plastic pollution. In line with a risk-based approach, initial emphasis should be on the products, additives or materials that generate the largest pressure on the system, and pose the highest risks. Priority lists of such products, additives or materials should urgently be developed.
 
 The Global Plastic Navigator tracks the states’ level of support for the treaty’s inclusion of global bans and phase-out requirements to eliminate the production, consumption, and trade of certain plastic categories of concern, including products, materials, or substances deemed to pose a significant risk, including probability and severity of potential harms to humans (including to human health), other living species, and the relevant environment.
 
-States’ convergence on the need to eliminate or significantly reduce these plastic categories is taken as one of the indicators for the development of an ambitious and effective treaty to end plastic pollution. WWF’s [submission (pdf)]( https://apps1.unep.org/resolutions/uploads/230106_wwfs_submission_on_potential_options_for_elements_towards_an_international_legally_binding_instrument_0.pdf) to the Intergovernmental Negotiating Committee, provides further information on WWF’s key recommendations on the potential options for elements towards an international legally binding instrument.
+States’ convergence on the need to eliminate or significantly reduce these plastic categories is taken as one of the key indicators for the development of an ambitious and effective treaty to end plastic pollution. WWF’s [submission (pdf)]( https://apps1.unep.org/resolutions/uploads/230106_wwfs_submission_on_potential_options_for_elements_towards_an_international_legally_binding_instrument_0.pdf) to the Intergovernmental Negotiating Committee, provides further information on WWF’s key recommendations on the potential options for elements towards an international legally binding instrument.
 
 
 ## How to read the data
