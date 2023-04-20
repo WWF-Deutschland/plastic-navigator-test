@@ -6,13 +6,13 @@ lang: en
 title: Circulate
 ---
 
-The treaty must ensure that remaining plastic products—that are not banned or phased out—are effectively circulated in a non-toxic circular economy, and should be subject to requirements and standards for reuse and effective recycling, starting with immediate measures aimed at plastic categories posing the highest risk. Both positive (i.e., allowed) lists and negative (i.e., not allowed) lists should be considered to specify these requirements and standards.
+The treaty must ensure that remaining plastic products—that are not banned or phased out—are effectively circulated in a non-toxic circular economy, and should be subject to requirements and standards for reuse and effective recycling, starting with immediate measures aimed at plastic categories posing the highest risk. This is one of the indispensable components of an ambitious treaty to end plastic pollution. Both positive (i.e., allowed) lists and negative (i.e., not allowed) lists should be considered to specify these requirements and standards.
 
 Some (non-exhaustive) examples of these global requirements and standards are: design standards for high-risk product categories or applications (e.g., packaging), aimed at incentivizing reuse, collection and/or recycling; standards on materials, colours and additives allowed for use in certain products; elimination of toxic additives that make reuse and recycled materials dangerous for human health and the environment; obligations on product information disclosure to improve global transparency (e.g., polymers and chemical additives of products); etc.
 
 The Global Plastic Navigator tracks the states’ level of support for the treaty’s inclusion of global requirements and standards for products and relevant systems to circulate remaining plastics  (those not eliminated) in a non-toxic circular economy.
 
-States’ convergence on the need to ensure a non-toxic circular economy of plastics is taken as one of the indicators for the development of an ambitious and effective treaty to end plastic pollution.
+States’ convergence on the need to ensure a non-toxic circular economy of plastics is taken as one of the key indicators for the development of an ambitious and effective treaty to end plastic pollution.
 
 
 ## How to read the data
