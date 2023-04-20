@@ -6,7 +6,7 @@ lang: en
 title: Safely Manage
 ---
 
-While the treaty should include specific measures to ensure improved waste management, it is important to recognize that reactive measures alone will do nothing to address the current plastic production and consumption trajectories.
+While the treaty should include specific measures to ensure improved waste management, it is important to recognize that reactive measures alone will do nothing to address the current plastic production and consumption trajectories. These measures must be complemented by other indispensable components, such as global bans, phase-outs, and global requirements standards to safely circulate plastics, to end plastic pollution
 
 Some (non-exhaustive) examples of global requirements and standards on environmentally sound waste management are:
 
@@ -19,7 +19,7 @@ Some (non-exhaustive) examples of global requirements and standards on environme
 
 The Global Plastic Navigator tracks the states’ level of support for the treaty’s inclusion of global requirements and standards to ensure environmentally sound management of the plastics that becomes waste.
 
-States’ convergence on the need to ensure environmentally sound waste management of plastics is taken as one of the indicators for the development of an ambitious and effective treaty to end plastic pollution.
+States’ convergence on the need to ensure environmentally sound waste management of plastics is taken as one of the key indicators for the development of an ambitious and effective treaty to end plastic pollution.
 
 
 
