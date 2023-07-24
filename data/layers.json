@@ -337,7 +337,7 @@
   },
   {
     "id": "policy-commitments",
-    "content-id": "policy-commitments-area",
+    "content-id": "policy-commitments-intro",
     "z-index": "20",
     "category": "policy",
     "group": "policy",
@@ -346,9 +346,52 @@
     "multipleIndicators": "1",
     "file": "layers/policy/countries.csv",
     "self": "code",
+    "styles-by-value": {
+      "4": {
+        "fillColor": "#00abf1",
+        "color": "#00abf1",
+        "fillOpacity": 0.5
+      },
+      "3": {
+        "fillColor": "#047C3E",
+        "color": "#047C3E",
+        "fillOpacity": 0.5
+      },
+      "2": {
+        "fillColor": "#3ea667",
+        "color": "#3ea667",
+        "fillOpacity": 0.4
+      },
+      "1": {
+        "fillColor": "#8CC63F",
+        "color": "#8CC63F",
+        "fillOpacity": 0.4
+      },
+      "0": {
+        "fillColor": "#dddddd",
+        "color": "#bbbbbb",
+        "fillOpacity": 0.4,
+        "key": false
+      },
+      "-1": {
+        "fillColor": "#dddddd",
+        "color": "#bbbbbb",
+        "fillOpacity": 0.4,
+        "key": false
+      }
+    },
     "geometries": [
       {
-        "default": "all",
+        "settings": {
+          "active": {
+            "default": true,
+            "type": "checkbox",
+            "label": {
+              "en": "Show areas for states",
+              "de": "Staatsgebiete anzeigen"
+            }
+          }
+        },
         "feature": "code",
         "type": "topojson",
         "feature-type": "Polygon",
@@ -357,36 +400,38 @@
         },
         "file": "layers/sov-country-areas-topo.json",
         "mask": "layers/sov-country-areas-mask-topo.json",
-        "styles-by-value": {
-          "4": {
-            "fillColor": "#00abf1",
-            "color": "#00abf1",
-            "fillOpacity": 0.5
-          },
-          "3": {
-            "fillColor": "#047C3E",
-            "color": "#047C3E",
-            "fillOpacity": 0.5
-          },
-          "2": {
-            "fillColor": "#3ea667",
-            "color": "#3ea667",
-            "fillOpacity": 0.4
-          },
-          "1": {
-            "fillColor": "#8CC63F",
-            "color": "#8CC63F",
-            "fillOpacity": 0.4
-          },
-          "0": {
-            "fillColor": "#dddddd",
-            "color": "#bbbbbb",
-            "fillOpacity": 0.4
-          }
-        }
+        "styles-by-value": "inherit"
       },
       {
-        "default-max-zoom": ["marker_max_zoom"],
+        "settings": {
+          "active": {
+            "default": true,
+            "type": "checkbox",
+            "label": {
+              "en": "Show markers for supporting states",
+              "de": "Markierungen für unterstützende Staaten anzeigen"
+            }
+          },
+          "zoom": {
+            "default": true,
+            "type": "toggle",
+            "options": {
+              "true": {
+                "label": {
+                  "en": "Small states only",
+                  "de": "Nur kleine Staaten"
+                }
+              },
+              "false": {
+                "label": {
+                  "en": "All states",
+                  "de": "Alle Staaten"
+                }
+              }
+            }
+          }
+        },
+        "default-max-zoom": "marker_max_zoom",
         "feature": "code",
         "type": "geojson",
         "feature-type": "Point",
@@ -425,19 +470,19 @@
     "attributes": ["display", "status"],
     "attributes-by-locale": ["name_{locale}"],
     "title": {
-      "en": "Tracking policies",
-      "de": "Tracking policies"
+      "en": "Tracking the global treaty negotiation",
+      "de": "Beobachtung der Verhandlungen zum internationalen Abkommen"
     },
     "title-short": {
       "en": "Policy",
-      "de": "Policy"
+      "de": "Politik"
     },
     "title-module": {
-      "en": "What are the UN Member States’ levels of support for negotiating a new global agreement on marine plastic pollution?",
-      "de": "Wie stark ist die Unterstützung einzelner UN-Mitgliedsstaaten für ein neues globales Abkommen zur Bekämpfung der Vermüllung der Meere mit Plastik?"
+      "en": "What are the states’ levels of support for negotiating a new global agreement on marine plastic pollution?",
+      "de": "Wie stark unterstützen die Staaten die Verhandlungen eines neuen, globalen Abkommens zum Kampf gegen Plastikmüll in den Weltmeeren?"
     },
     "about": {
-      "en": "The visualisation shows the UN Member States’ positions on a global, legally binding agreement based on our own research and various sources.",
+      "en": "TODO: The visualisation shows the UN Member States’ positions on a global, legally binding agreement based on our own research and various sources.",
       "de": "Die Darstellung zeigt auf Grundlage eigener Recherchen und verschiedener Quellen, wie sich die einzelnen UN-Mitgliedsstaaten hinsichtlich eines global verbindlichen Plastik-Abkommens positionieren."
     },
     "tables": {
@@ -502,10 +547,10 @@
           "id": "1",
           "content-id": "policy-commitments-1",
           "short": {
-            "en" : "Reduce"
+            "en" : "Ban & phase out"
           },
           "title": {
-            "en" : "Support for treaty’s global, binding measures to minimise total pollution through reduction and elimination of the production of problematic plastics"
+            "en" : "Support for global bans and phase-out requirements to eliminate the production, consumption and trade of certain plastic categories of concern"
           }
         },
         {
@@ -515,17 +560,17 @@
             "en" : "Circulate"
           },
           "title": {
-            "en" : "Support for treaty’s global, binding measures to minimise total pollution through increased and non-toxic circulation of plastic products"
+            "en" : "Support for global requirements and standards for products and relevant systems to circulate remaining plastics in a non-toxic circular economy"
           }
         },
         {
           "id": "3",
           "content-id": "policy-commitments-3",
           "short": {
-            "en" : "Manage"
+            "en" : "Safely manage"
           },
           "title": {
-            "en" : "Support for treaty’s global, binding measures to minimise total pollution through improved waste management, remediation activities, and other measures"
+            "en" : "Support for global requirements and standards to ensure environmentally sound management of the plastics that becomes waste"
           }
         },
         {
@@ -535,7 +580,7 @@
             "en": "Implementation support"
           },
           "title": {
-            "en": "Support for treaty’s mechanism to provide necessary support to countries for the implementation of the treaty’s obligations"
+            "en": "Support for treaty’s mechanisms to provide necessary support to countries for the effective implementation of their obligations"
           }
         }
       ],
