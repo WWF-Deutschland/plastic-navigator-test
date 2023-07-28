@@ -175,7 +175,9 @@ const Content = styled(p => (
   }
 `;
 
-const Description = styled(Text)``;
+const Description = styled(Text)`
+  hyphens: auto;
+`;
 
 const LayerTitleWrap = styled(p => (
   <Box
@@ -393,15 +395,15 @@ export function PanelKey({
           <Content
             pad={{
               top: hasTabs ? 'xsmall' : 'small',
-              bottom: 'small',
-              horizontal: 'small',
+              bottom: isMinSize(size, 'medium') ? 'small' : 'xsmall',
+              horizontal: isMinSize(size, 'medium') ? 'small' : 'xsmall',
             }}
             style={{ zIndex: 2 }}
           >
             {hasTabs && (
               <Box
                 direction="row"
-                gap="small"
+                gap="xsmall"
                 flex={false}
               >
                 <ButtonTab

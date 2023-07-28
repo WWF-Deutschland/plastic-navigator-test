@@ -26,7 +26,7 @@ import KeyLabel from './KeyLabel';
 // import messages from './messages';
 
 const SquareLabelWrap = styled(p => (
-  <Box direction="row" align="start" gap="xsmall" {...p} />
+  <Box direction="row" align="center" gap="xsmall" {...p} />
 ))`
   min-height: 18px;
 `;
@@ -91,6 +91,7 @@ export function Areas({
       indicatorId,
       config,
       locale,
+      intl,
     });
 
   if (featureStyle && featureStyle.multiple === 'true') {
