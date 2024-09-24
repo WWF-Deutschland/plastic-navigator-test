@@ -566,18 +566,6 @@
           }
         },
         {
-          "id": "3",
-          "content-id": "policy-commitments-3",
-          "short": {
-            "en" : "Safely manage",
-            "de" : "Abfallmanagement"
-          },
-          "title": {
-            "en" : "Support for global requirements and standards to ensure environmentally sound management of the plastics that becomes waste",
-            "de" : "Unterstützung für globale Vorgaben und Standards, die ein umweltverträgliches Abfallmanagement von Kunststoffabfällen gewährleisten"
-          }
-        },
-        {
           "id": "4",
           "content-id": "policy-commitments-4",
           "short": {
