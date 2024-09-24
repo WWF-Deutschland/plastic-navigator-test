@@ -18,5 +18,4 @@ As a priority, states must pursue binding, global obligations on the most proble
 
 The Global Plastic Navigator tracks states’ level of support for these essential elements in the treaty, as key indicators for an ambitious and effective treaty to end plastic pollution. WWF’s [statement on the treaty must-haves (pdf)](paste link here) provides further information on the four essential elements in the treaty that together provide a strong starting point and a credible, well-supported pathway to end plastic pollution.
 
-
 [SELECT-TOPICS-ARCHIVE]
