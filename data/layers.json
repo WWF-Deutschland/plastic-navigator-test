@@ -592,6 +592,7 @@
         {
           "id": "10",
           "content-id": "policy-commitments-10",
+          "aggregate": "1",
           "short": {
             "en": "Red Lines",
             "de": "Red Lines (DE)"
