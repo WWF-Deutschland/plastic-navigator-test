@@ -48,10 +48,12 @@ import {
 } from 'containers/App/actions';
 
 import { startsWith } from 'utils/string';
+import { isArchived, isAggregate, isHidden } from 'utils/policy';
 
 import commonMessages from 'messages';
 import messages from './messages';
 import TopicCard from './TopicCard';
+import AggregateTopicCard from './AggregateTopicCard';
 
 const Buttons = styled(props => <Box gap="small" direction="row" {...props} />)`
   position: absolute;
@@ -97,10 +99,11 @@ const TitleSelect = styled(p => <Text size="xlarge" {...p} />)`
   font-family: 'wwfregular';
   text-transform: uppercase;
   line-height: 1;
-  margin-top: 3px;
-  border-bottom: 1px solid rgb(218, 218, 218);
-  padding-bottom: 10px;
+  margin-top: 10px;
 `;
+const TitleSelectWrapper = styled(p => (
+  <Box {...p} align="center" margin={{ top: 'small' }} />
+))``;
 const TitleSelectArchived = styled(p => <Text size="large" {...p} />)`
   font-family: 'wwfregular';
   text-transform: uppercase;
@@ -111,6 +114,7 @@ const TitleSelectArchived = styled(p => <Text size="large" {...p} />)`
 `;
 
 const TopicCardWrap = styled(p => <Box {...p} />)``;
+const AggregateCardWrap = styled(p => <Box {...p} background="white" />)``;
 
 const COMPONENT_KEY = 'mpol';
 
@@ -216,20 +220,35 @@ export function ModulePolicy({
   // const isModuleInfo = startsWith(info, MODULES.policy.featuredLayer);
   const ref = React.useRef(null);
   const layerConfig = config && config.find(l => l.id === POLICY_LAYER);
-  const topicsPrimary =
+  const topicsData =
     moduleLayer &&
     moduleLayer.data.tables &&
     moduleLayer.data.tables.topics &&
     moduleLayer.data.tables.topics.data &&
-    moduleLayer.data.tables.topics.data.data.filter(t => t.archived !== '1');
-  const topicsSecondary =
-    moduleLayer &&
-    moduleLayer.data.tables &&
-    moduleLayer.data.tables.topics &&
-    moduleLayer.data.tables.topics.data &&
-    moduleLayer.data.tables.topics.data.data.filter(t => t.archived === '1');
+    moduleLayer.data.tables.topics.data.data &&
+    moduleLayer.data.tables.topics.data.data.filter(t => !isHidden(t));
+
+  // const topicsAggregated =
+  //   topicsData && topicsData.filter(t => isAggregate(t) && !isArchived(t));
+
+  let topicsCurrent =
+    topicsData && topicsData.filter(t => !isAggregate(t) && !isArchived(t));
+  // topicsData && topicsData.filter(t => !isAggregate(t) && !isArchived(t));
+
+  const topicsArchived =
+    topicsData && topicsData.filter(t => !isAggregate(t) && isArchived(t));
+
+  const aggregateTopic = topicsData && topicsData.find(t => isAggregate(t));
+
+  if (aggregateTopic) {
+    const childTopicIds = aggregateTopic.aggregate
+      .split(',')
+      .map(id => id.trim());
+    topicsCurrent = topicsCurrent.filter(t => childTopicIds.indexOf(t.id) > -1);
+  }
 
   const size = React.useContext(ResponsiveContext);
+
   return (
     <div>
       <Helmet>
@@ -265,25 +284,19 @@ export function ModulePolicy({
                 inject={[
                   {
                     tag: '[SELECT-TOPICS-CURRENT]',
-                    el: (
-                      <Box
-                        margin={{ top: 'medium', bottom: 'small' }}
-                        gap="small"
-                      >
-                        <TitleSelect>
-                          <FormattedMessage {...messages.selectTopics} />
-                        </TitleSelect>
-                        <TopicCardWrap
-                          direction="row"
-                          margin={{ top: 'small' }}
-                          wrap
+                    el:
+                      aggregateTopic || topicsCurrent ? (
+                        <Box
+                          margin={{ top: 'medium', bottom: 'small' }}
+                          pad="medium"
+                          gap="small"
+                          background="brand"
                         >
-                          {topicsPrimary &&
-                            topicsPrimary.map(t => (
-                              <TopicCard
-                                key={t.id}
-                                count={topicsPrimary.length}
-                                topic={t}
+                          {aggregateTopic && (
+                            <AggregateCardWrap>
+                              <AggregateTopicCard
+                                key={aggregateTopic.id}
+                                topic={aggregateTopic}
                                 onTopicSelect={id =>
                                   onSetLayers([
                                     ...activeLayers,
@@ -291,10 +304,38 @@ export function ModulePolicy({
                                   ])
                                 }
                               />
-                            ))}
-                        </TopicCardWrap>
-                      </Box>
-                    ),
+                            </AggregateCardWrap>
+                          )}
+                          {topicsCurrent && (
+                            <TitleSelectWrapper>
+                              <TitleSelect>
+                                <FormattedMessage {...messages.selectTopics} />
+                              </TitleSelect>
+                            </TitleSelectWrapper>
+                          )}
+                          {topicsCurrent && (
+                            <TopicCardWrap
+                              direction="row"
+                              margin={{ top: 'small' }}
+                            >
+                              {topicsCurrent.map(t => (
+                                <TopicCard
+                                  key={t.id}
+                                  count={topicsCurrent.length}
+                                  topic={t}
+                                  invertColor
+                                  onTopicSelect={id =>
+                                    onSetLayers([
+                                      ...activeLayers,
+                                      `${POLICY_LAYER}_${id}`,
+                                    ])
+                                  }
+                                />
+                              ))}
+                            </TopicCardWrap>
+                          )}
+                        </Box>
+                      ) : null,
                   },
                   {
                     tag: '[SELECT-TOPICS-ARCHIVE]',
@@ -306,12 +347,12 @@ export function ModulePolicy({
                           />
                         </TitleSelectArchived>
                         <Box direction="row" margin={{ top: 'small' }}>
-                          {topicsSecondary &&
-                            topicsSecondary.map(t => (
+                          {topicsArchived &&
+                            topicsArchived.map(t => (
                               <TopicCard
                                 key={t.id}
                                 secondary
-                                count={topicsSecondary.length}
+                                count={topicsArchived.length}
                                 topic={t}
                                 onTopicSelect={id =>
                                   onSetLayers([
