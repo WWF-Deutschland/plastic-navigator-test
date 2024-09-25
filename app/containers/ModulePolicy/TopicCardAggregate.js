@@ -1,6 +1,6 @@
 /**
  *
- * ModulePolicy: AggregateTopicCard
+ * ModulePolicy: TopicCardAggregate
  *
  */
 
@@ -26,7 +26,7 @@ const TopicInner = styled(p => (<Box pad='medium' {...p} />))`
   background-color: ${({ theme }) =>
     theme.global.colors.topicCards.aggregate.background};
   &:hover {
-    box-shadow: ${({ theme }) => theme.global.colors.topicCards.aggregate.dropShadow} 4px 2px 4px;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.20);
   }
 `;
 
@@ -50,11 +50,9 @@ const ShowOnMapButton = styled(props => <Box {...props} />)`
   border-radius: 99999px;
   background-color: ${({ isHover, theme }) =>
     !isHover ? theme.global.colors.brand : theme.global.colors.brandDarker};
-  box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 4px;
-  padding: 7px 20px 9px;
-  @media (min-width: ${({ theme }) => theme.sizes.large.minpx}) {
-    padding: 10px 28px 12px;
-  }
+  box-shadow: ${({ isHover }) =>
+    isHover ? '2px 2px 6px rgba(0,0,0,0.15)' : '2px 2px 6px rgba(0,0,0,0.10)'};
+  padding: 13px 30px;
 `;
 const ShowText = styled(p => <Text {...p} />)`
   color: white;
@@ -62,12 +60,10 @@ const ShowText = styled(p => <Text {...p} />)`
   text-transform: uppercase;
   line-height: 1;
   font-size: 24px;
-  @media (min-width: ${({ theme }) => theme.sizes.large.minpx}) {
-    font-size: 28px;
-  }
+  margin-top: -1px;
 `;
 
-export function AggregateTopicCard({ intl, onTopicSelect, topic, theme }) {
+export function TopicCardAggregate({ intl, onTopicSelect, topic, theme }) {
   const { locale } = intl;
   const [isHover, setIsHover] = useState(false);
   const Icon = p => POLICY_TOPIC_ICONS[topic.id](p);
@@ -126,11 +122,11 @@ export function AggregateTopicCard({ intl, onTopicSelect, topic, theme }) {
   );
 }
 
-AggregateTopicCard.propTypes = {
+TopicCardAggregate.propTypes = {
   onTopicSelect: PropTypes.func,
   topic: PropTypes.object,
   intl: intlShape.isRequired,
   theme: PropTypes.object,
 };
 
-export default injectIntl(withTheme(AggregateTopicCard));
+export default injectIntl(withTheme(TopicCardAggregate));

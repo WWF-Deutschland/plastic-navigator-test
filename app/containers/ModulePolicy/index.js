@@ -53,19 +53,18 @@ import { isArchived, isAggregate, isHidden } from 'utils/policy';
 import commonMessages from 'messages';
 import messages from './messages';
 import TopicCard from './TopicCard';
-import AggregateTopicCard from './AggregateTopicCard';
+import TopicCardAggregate from './TopicCardAggregate';
 
 const CurrentTopicsWrapper = styled(props => (
   <Box
     margin={{ top: 'medium', bottom: 'small' }}
-    pad="medium"
+    pad={{ top: 'medium', bottom: 'small', horizontal: 'medium' }}
     gap="small"
     background="brand"
+    elevation="medium"
     {...props}
   />
-))`
-  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2);
-`;
+))``;
 const ArchivedTopicsWrapper = styled(props => <Box {...props} />)``;
 
 const Buttons = styled(props => <Box gap="small" direction="row" {...props} />)`
@@ -118,9 +117,6 @@ const TitleSelectWrapper = styled(p => (
 ))``;
 const TopicCardWrap = styled(p => <Box {...p} />)`
   width: 100%;
-`;
-const AggregateCardWrap = styled(p => <Box {...p} background="white" />)`
-  box-shadow: 4px 4px 4px ${({ theme }) => theme.global.colors.brandDark};
 `;
 
 const COMPONENT_KEY = 'mpol';
@@ -291,7 +287,7 @@ export function ModulePolicy({
                     tag: '[SELECT-TOPICS-CURRENT]',
                     el:
                       aggregateTopic || topicsCurrent ? (
-                        <Box>
+                        <Box margin={{ top: 'ml', bottom: 'medium' }}>
                           <TitleSelect>
                             <FormattedMessage
                               {...messages.selectCurrentTopics}
@@ -299,18 +295,16 @@ export function ModulePolicy({
                           </TitleSelect>
                           <CurrentTopicsWrapper>
                             {aggregateTopic && (
-                              <AggregateCardWrap>
-                                <AggregateTopicCard
-                                  key={aggregateTopic.id}
-                                  topic={aggregateTopic}
-                                  onTopicSelect={id =>
-                                    onSetLayers([
-                                      ...activeLayers,
-                                      `${POLICY_LAYER}_${id}`,
-                                    ])
-                                  }
-                                />
-                              </AggregateCardWrap>
+                              <TopicCardAggregate
+                                key={aggregateTopic.id}
+                                topic={aggregateTopic}
+                                onTopicSelect={id =>
+                                  onSetLayers([
+                                    ...activeLayers,
+                                    `${POLICY_LAYER}_${id}`,
+                                  ])
+                                }
+                              />
                             )}
                             {topicsCurrent && (
                               <TitleSelectWrapper>
@@ -332,7 +326,6 @@ export function ModulePolicy({
                                     key={t.id}
                                     count={topicsCurrent.length}
                                     topic={t}
-                                    invertColor
                                     onTopicSelect={id =>
                                       onSetLayers([
                                         ...activeLayers,
@@ -363,7 +356,7 @@ export function ModulePolicy({
                             topicsArchived.map(t => (
                               <TopicCard
                                 key={t.id}
-                                secondary
+                                archived
                                 count={topicsArchived.length}
                                 topic={t}
                                 onTopicSelect={id =>
