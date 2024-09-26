@@ -1,4 +1,5 @@
 <script>
   const url = window.location.pathname.replace('/plastic-navigator-test/', '/plastic-navigator-test/#/')
-  window.location.replace(url);
+  const search = window.location.search;
+  window.location.replace(url + search);
 </script>
